@@ -89,7 +89,7 @@ mkdir "%BUILD_DIR%"
 :: 构建共享模块
 echo [信息] 构建共享模块...
 cd /d "%PROJECT_ROOT%\shared"
-npm ci
+npm ci --silent --no-audit --no-fund
 if %errorlevel% neq 0 (
     echo [错误] 共享模块依赖安装失败
     goto :error
@@ -103,7 +103,7 @@ if %errorlevel% neq 0 (
 :: 构建后端
 echo [信息] 构建后端...
 cd /d "%PROJECT_ROOT%\backend"
-npm ci --production=false
+npm ci --production=false --silent --no-audit --no-fund
 if %errorlevel% neq 0 (
     echo [错误] 后端依赖安装失败
     goto :error
@@ -117,7 +117,7 @@ if %errorlevel% neq 0 (
 :: 构建前端
 echo [信息] 构建前端...
 cd /d "%PROJECT_ROOT%\frontend"
-npm ci
+npm ci --silent --no-audit --no-fund
 if %errorlevel% neq 0 (
     echo [错误] 前端依赖安装失败
     goto :error
