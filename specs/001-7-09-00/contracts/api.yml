@@ -1,0 +1,611 @@
+openapi: 3.0.3
+info:
+  title: EasySchedule API
+  description: 多人时间协商可视化系统API
+  version: 1.0.0
+  contact:
+    name: EasySchedule Team
+
+servers:
+  - url: https://www.neemo.tech/EasySchedule/api
+    description: Production server
+  - url: http://localhost:4000/api
+    description: Development server
+
+paths:
+  # 时间表管理
+  /schedules:
+    post:
+      summary: 创建新时间表
+      tags:
+        - Schedules
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateScheduleRequest'
+      responses:
+        '201':
+          description: 时间表创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /schedules/{scheduleId}:
+    get:
+      summary: 获取时间表详情
+      tags:
+        - Schedules
+      parameters:
+        - name: scheduleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 时间表详情
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleDetailResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: 删除时间表（仅创建者）
+      tags:
+        - Schedules
+      parameters:
+        - name: scheduleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 时间表删除成功
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /schedules/{scheduleId}/lock:
+    post:
+      summary: 锁定/解锁时间表（仅创建者）
+      tags:
+        - Schedules
+      parameters:
+        - name: scheduleId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isLocked:
+                  type: boolean
+                  description: 是否锁定
+              required:
+                - isLocked
+      responses:
+        '200':
+          description: 锁定状态更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleResponse'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # 分享链接管理
+  /schedules/{scheduleId}/share:
+    get:
+      summary: 获取分享链接
+      tags:
+        - ShareLinks
+      parameters:
+        - name: scheduleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 分享链接
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShareLinkResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # 通过分享链接访问
+  /share/{token}:
+    get:
+      summary: 通过分享链接获取时间表
+      tags:
+        - ShareLinks
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 时间表详情
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleDetailResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '410':
+          description: 时间表已过期
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # 参与者管理
+  /schedules/{scheduleId}/participants:
+    get:
+      summary: 获取参与者列表
+      tags:
+        - Participants
+      parameters:
+        - name: scheduleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 参与者列表
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  participants:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ParticipantResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: 添加或更新参与者
+      tags:
+        - Participants
+      parameters:
+        - name: scheduleId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateParticipantRequest'
+      responses:
+        '200':
+          description: 参与者更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipantResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: 参与者姓名冲突
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # 时间段管理
+  /participants/{participantId}/timeslots:
+    get:
+      summary: 获取参与者的时间段
+      tags:
+        - TimeSlots
+      parameters:
+        - name: participantId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 时间段列表
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeSlots:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TimeSlotResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      summary: 更新参与者的时间段
+      tags:
+        - TimeSlots
+      parameters:
+        - name: participantId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTimeSlotsRequest'
+      responses:
+        '200':
+          description: 时间段更新成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeSlots:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TimeSlotResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # 统计分析
+  /schedules/{scheduleId}/analytics:
+    get:
+      summary: 获取时间表统计分析
+      tags:
+        - Analytics
+      parameters:
+        - name: scheduleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 统计分析结果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyticsResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    # 请求模型
+    CreateScheduleRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: 时间表标题
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          description: 时间表描述
+          maxLength: 500
+        startDate:
+          type: string
+          format: date
+          description: 开始日期 (YYYY-MM-DD)
+        timezone:
+          type: string
+          description: 时区 (IANA标识符)
+          default: Asia/Shanghai
+        expiresAt:
+          type: string
+          format: date-time
+          description: 过期时间
+      required:
+        - title
+        - startDate
+        - expiresAt
+
+    UpdateParticipantRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 参与者姓名
+          minLength: 1
+          maxLength: 50
+        timeSlots:
+          type: array
+          description: 时间段列表
+          items:
+            type: object
+            properties:
+              startTime:
+                type: string
+                format: date-time
+                description: 开始时间
+              endTime:
+                type: string
+                format: date-time
+                description: 结束时间
+              isCustom:
+                type: boolean
+                description: 是否为自定义时间段
+                default: false
+            required:
+              - startTime
+              - endTime
+      required:
+        - name
+        - timeSlots
+
+    UpdateTimeSlotsRequest:
+      type: object
+      properties:
+        timeSlots:
+          type: array
+          description: 时间段列表
+          items:
+            type: object
+            properties:
+              startTime:
+                type: string
+                format: date-time
+                description: 开始时间
+              endTime:
+                type: string
+                format: date-time
+                description: 结束时间
+              isCustom:
+                type: boolean
+                description: 是否为自定义时间段
+                default: false
+            required:
+              - startTime
+              - endTime
+      required:
+        - timeSlots
+
+    # 响应模型
+    ScheduleResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        timezone:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        expiresAt:
+          type: string
+          format: date-time
+        isLocked:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ScheduleDetailResponse:
+      allOf:
+        - $ref: '#/components/schemas/ScheduleResponse'
+        - type: object
+          properties:
+            participants:
+              type: array
+              items:
+                $ref: '#/components/schemas/ParticipantResponse'
+            shareToken:
+              type: string
+              description: 分享令牌（仅创建者可见）
+
+    ParticipantResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        color:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        timeSlots:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSlotResponse'
+
+    TimeSlotResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        isCustom:
+          type: boolean
+
+    ShareLinkResponse:
+      type: object
+      properties:
+        url:
+          type: string
+          description: 完整的分享链接
+        token:
+          type: string
+          description: 分享令牌
+
+    AnalyticsResponse:
+      type: object
+      properties:
+        totalParticipants:
+          type: integer
+          description: 总参与者数量
+        topOverlappingSlots:
+          type: array
+          description: 重合度最高的时间段 (Top 3)
+          items:
+            type: object
+            properties:
+              startTime:
+                type: string
+                format: date-time
+              endTime:
+                type: string
+                format: date-time
+              participantCount:
+                type: integer
+              participants:
+                type: array
+                items:
+                  type: string
+                  description: 参与者姓名
+        availabilityHeatmap:
+          type: array
+          description: 可用时间热力图数据
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+              hours:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    hour:
+                      type: integer
+                      minimum: 0
+                      maximum: 23
+                    participantCount:
+                      type: integer
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: 错误类型
+        message:
+          type: string
+          description: 错误详情
+        details:
+          type: object
+          description: 额外的错误详情
+
+  responses:
+    BadRequest:
+      description: 请求参数错误
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Unauthorized:
+      description: 未授权访问
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Forbidden:
+      description: 禁止访问
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    NotFound:
+      description: 资源不存在
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    InternalServerError:
+      description: 服务器内部错误
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - [] # 无需认证的公开API

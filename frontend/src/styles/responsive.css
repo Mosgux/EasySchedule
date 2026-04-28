@@ -1,0 +1,393 @@
+/**
+ * EasySchedule Responsive Design Utilities
+ * 移动端和桌面端响应式设计工具类
+ *
+ * Design Breakpoints:
+ * - sm: 640px (small tablets and large phones)
+ * - md: 768px (tablets)
+ * - lg: 1024px (small laptops)
+ * - xl: 1280px (laptops)
+ * - 2xl: 1536px (desktops)
+ */
+
+@layer utilities {
+  /* 响应式容器 */
+  .container-responsive {
+    @apply w-full mx-auto px-4 sm:px-6 lg:px-8;
+    max-width: 100%;
+  }
+
+  .container-narrow {
+    @apply container-responsive;
+    max-width: 1200px;
+  }
+
+  .container-wide {
+    @apply container-responsive;
+    max-width: 1400px;
+  }
+
+  /* 响应式网格布局 */
+  .grid-responsive {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+
+  .grid-responsive-2 {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3;
+  }
+
+  .grid-responsive-calendar {
+    @apply grid grid-cols-7 gap-1 sm:gap-2 lg:gap-3;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+
+  /* 响应式文本大小 */
+  .text-responsive-xs {
+    @apply text-xs sm:text-sm;
+  }
+
+  .text-responsive-sm {
+    @apply text-sm sm:text-base;
+  }
+
+  .text-responsive-base {
+    @apply text-base sm:text-lg lg:text-xl;
+  }
+
+  .text-responsive-lg {
+    @apply text-lg sm:text-xl lg:text-2xl xl:text-3xl;
+  }
+
+  .text-responsive-xl {
+    @apply text-xl sm:text-2xl lg:text-3xl xl:text-4xl;
+  }
+
+  .text-responsive-2xl {
+    @apply text-2xl sm:text-3xl lg:text-4xl xl:text-5xl;
+  }
+
+  /* 响应式间距 */
+  .space-responsive-y {
+    @apply space-y-4 sm:space-y-6 lg:space-y-8;
+  }
+
+  .space-responsive-x {
+    @apply space-x-4 sm:space-x-6 lg:space-x-8;
+  }
+
+  .p-responsive {
+    @apply p-4 sm:p-6 lg:p-8;
+  }
+
+  .px-responsive {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  .py-responsive {
+    @apply py-4 sm:py-6 lg:py-8;
+  }
+
+  .m-responsive {
+    @apply m-4 sm:m-6 lg:m-8;
+  }
+
+  .mx-responsive {
+    @apply mx-4 sm:mx-6 lg:mx-8;
+  }
+
+  .my-responsive {
+    @apply my-4 sm:my-6 lg:my-8;
+  }
+
+  /* 响应式按钮 */
+  .btn-responsive {
+    @apply btn px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base min-h-[44px] sm:min-h-[48px];
+  }
+
+  .btn-responsive-sm {
+    @apply btn px-3 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm min-h-[36px] sm:min-h-[40px];
+  }
+
+  .btn-responsive-lg {
+    @apply btn px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg min-h-[48px] sm:min-h-[52px];
+  }
+
+  /* 响应式表单元素 */
+  .input-responsive {
+    @apply input h-10 sm:h-12 text-sm sm:text-base px-3 sm:px-4;
+  }
+
+  .select-responsive {
+    @apply input h-10 sm:h-12 text-sm sm:text-base px-3 sm:px-4 pr-8 sm:pr-10;
+  }
+
+  .textarea-responsive {
+    @apply input text-sm sm:text-base px-3 sm:px-4 py-2 sm:py-3 min-h-[80px] sm:min-h-[100px];
+  }
+
+  /* 响应式卡片 */
+  .card-responsive {
+    @apply card p-4 sm:p-6 lg:p-8;
+  }
+
+  .card-compact {
+    @apply card p-3 sm:p-4 lg:p-6;
+  }
+
+  .card-spacious {
+    @apply card p-6 sm:p-8 lg:p-10;
+  }
+
+  /* 响应式导航 */
+  .nav-responsive {
+    @apply flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0;
+  }
+
+  .nav-mobile {
+    @apply sm:hidden;
+  }
+
+  .nav-desktop {
+    @apply hidden sm:flex;
+  }
+
+  /* 响应式日历组件 */
+  .calendar-responsive {
+    @apply w-full overflow-x-auto;
+  }
+
+  .calendar-grid {
+    @apply grid-responsive-calendar min-w-[300px] sm:min-w-[400px] lg:min-w-[500px];
+  }
+
+  .calendar-header {
+    @apply text-xs sm:text-sm font-medium text-gray-700 text-center py-2 sm:py-3;
+  }
+
+  .calendar-cell {
+    @apply aspect-square min-h-[40px] sm:min-h-[50px] lg:min-h-[60px] p-1 sm:p-2 border border-gray-200;
+  }
+
+  .calendar-cell-responsive {
+    @apply calendar-cell text-xs sm:text-sm;
+  }
+
+  /* 响应式时间选择器 */
+  .time-selector-responsive {
+    @apply flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4;
+  }
+
+  .time-slot-responsive {
+    @apply p-2 sm:p-3 text-xs sm:text-sm rounded-md border border-gray-200 cursor-pointer transition-colors;
+  }
+
+  .time-slot-responsive:hover {
+    @apply bg-gray-50 border-gray-300;
+  }
+
+  .time-slot-responsive.selected {
+    @apply bg-blue-50 border-blue-300 text-blue-700;
+  }
+
+  /* 响应式模态框 */
+  .modal-responsive {
+    @apply fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 lg:p-8;
+  }
+
+  .modal-content-responsive {
+    @apply bg-white rounded-lg shadow-xl max-w-full w-full max-h-[90vh] overflow-y-auto;
+    max-width: 500px;
+  }
+
+  @media (min-width: 640px) {
+    .modal-content-responsive {
+      max-width: 600px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .modal-content-responsive {
+      max-width: 700px;
+    }
+  }
+
+  .modal-header-responsive {
+    @apply p-4 sm:p-6 border-b border-gray-200;
+  }
+
+  .modal-body-responsive {
+    @apply p-4 sm:p-6;
+  }
+
+  .modal-footer-responsive {
+    @apply p-4 sm:p-6 border-t border-gray-200 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3;
+  }
+
+  /* 响应式统计信息 */
+  .stats-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6;
+  }
+
+  .stat-card {
+    @apply bg-white p-4 sm:p-6 rounded-lg border border-gray-200 shadow-sm;
+  }
+
+  .stat-value {
+    @apply text-2xl sm:text-3xl font-bold text-gray-900;
+  }
+
+  .stat-label {
+    @apply text-sm sm:text-base text-gray-600 mt-1;
+  }
+
+  /* 响应式工具栏 */
+  .toolbar-responsive {
+    @apply flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0;
+  }
+
+  .toolbar-group {
+    @apply flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-3;
+  }
+
+  /* 响应式侧边栏 */
+  .sidebar-responsive {
+    @apply fixed inset-y-0 left-0 z-40 w-64 sm:w-72 lg:w-80 transform transition-transform duration-300 ease-in-out;
+  }
+
+  .sidebar-responsive.closed {
+    @apply -translate-x-full;
+  }
+
+  .sidebar-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 z-30 sm:hidden;
+  }
+
+  .main-content-responsive {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  .main-content-responsive.sidebar-open {
+    @apply sm:ml-64 lg:ml-80;
+  }
+
+  /* 响应式加载状态 */
+  .loading-responsive {
+    @apply flex items-center justify-center p-8 sm:p-12 lg:p-16;
+  }
+
+  .skeleton-responsive {
+    @apply animate-pulse bg-gray-200 rounded;
+  }
+
+  .skeleton-text {
+    @apply skeleton-responsive h-4 w-full mb-2;
+  }
+
+  .skeleton-text-lg {
+    @apply skeleton-text h-6 w-3/4;
+  }
+
+  .skeleton-avatar {
+    @apply skeleton-responsive h-10 w-10 sm:h-12 sm:w-12 rounded-full;
+  }
+
+  /* 响应式错误页面 */
+  .error-page {
+    @apply flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8 text-center;
+  }
+
+  .error-icon {
+    @apply text-4xl sm:text-5xl lg:text-6xl text-gray-400 mb-4 sm:mb-6;
+  }
+
+  .error-title {
+    @apply text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-900 mb-2 sm:mb-4;
+  }
+
+  .error-description {
+    @apply text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 max-w-md;
+  }
+
+  /* 响应式可访问性增强 */
+  .focus-responsive {
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  }
+
+  .skip-link {
+    @apply sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded-md z-50;
+  }
+
+  /* 打印样式 */
+  @media print {
+    .print-hidden {
+      @apply hidden;
+    }
+
+    .print-only {
+      @apply block;
+    }
+
+    .calendar-grid {
+      @apply break-inside-avoid;
+    }
+  }
+
+  /* 高对比度模式支持 */
+  @media (prefers-contrast: high) {
+    .high-contrast-border {
+      @apply border-2 border-gray-900;
+    }
+
+    .high-contrast-text {
+      @apply text-gray-900;
+    }
+  }
+
+  /* 减少动画模式支持 */
+  @media (prefers-reduced-motion: reduce) {
+    .motion-reduce {
+      @apply transition-none duration-0;
+    }
+  }
+}
+
+/* 响应式字体大小优化 */
+@media (max-width: 640px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 1025px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+/* 横屏模式优化 */
+@media (orientation: landscape) and (max-height: 500px) {
+  .landscape-compact {
+    @apply py-2 px-3;
+  }
+
+  .calendar-cell {
+    @apply min-h-[35px] p-1;
+  }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  .touch-button {
+    @apply py-3 px-4;
+  }
+}

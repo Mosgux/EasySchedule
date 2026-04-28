@@ -1,0 +1,57 @@
+{
+  "name": "easyschedule",
+  "version": "1.0.0",
+  "description": "EasySchedule - 多人时间协商可视化系统",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "npm run build:shared && npm run build:backend && npm run build:frontend",
+    "build:shared": "cd shared && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm test",
+    "lint": "npm run lint:backend && npm run lint:frontend && npm run lint:shared",
+    "lint:backend": "cd backend && npm run lint",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:shared": "cd shared && npm run lint",
+    "lint:fix": "npm run lint:fix:backend && npm run lint:fix:frontend && npm run lint:fix:shared",
+    "lint:fix:backend": "cd backend && npm run lint:fix",
+    "lint:fix:frontend": "cd frontend && npm run lint:fix",
+    "lint:fix:shared": "cd shared && npm run lint:fix",
+    "prepare": "husky install",
+    "postinstall": "npm run build:shared"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.54.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.1.0",
+    "prettier": "^3.1.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ]
+  },
+  "engines": {
+    "node": ">=18.19.0"
+  },
+  "dependencies": {
+    "@esbuild/win32-x64": "^0.25.10"
+  }
+}

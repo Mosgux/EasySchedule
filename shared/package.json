@@ -1,0 +1,21 @@
+{
+  "name": "easyschedule-shared",
+  "version": "1.0.0",
+  "description": "EasySchedule Shared Types and Constants",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint . --ext .ts --max-warnings 0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    "eslint": "^8.54.0",
+    "typescript": "^5.2.2"
+  },
+  "engines": {
+    "node": ">=18.19.0"
+  }
+}

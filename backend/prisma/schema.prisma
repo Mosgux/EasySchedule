@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Schedule {
+  id              String   @id @default(cuid())
+  title           String
+  description     String?
+  timezone        String   @default("Asia/Shanghai")
+  startDate       DateTime // 时间范围开始日期
+  endDate         DateTime // 时间范围结束日期 (startDate + 7 days)
+  expiresAt       DateTime // 过期时间
+  isLocked        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // 关联关系
+  participants    Participant[]
+  shareLink       ShareLink?
+  overlapStats    OverlapStats[]
+
+  @@map("schedules")
+}
+
+model Participant {
+  id            String    @id @default(cuid())
+  scheduleId    String
+  name          String
+  color         String    @default("") // 分配的颜色标识
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // 关联关系
+  schedule      Schedule  @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  timeSlots     TimeSlot[]
+
+  @@unique([scheduleId, name]) // 同一时间表内姓名唯一
+  @@map("participants")
+}
+
+model TimeSlot {
+  id            String   @id @default(cuid())
+  participantId String
+  startTime     DateTime // 开始时间 (包含日期)
+  endTime       DateTime // 结束时间 (包含日期)
+  isCustom      Boolean  @default(false) // 是否为自定义时间段
+
+  // 关联关系
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+  @@map("time_slots")
+}
+
+model ShareLink {
+  id          String   @id @default(cuid())
+  scheduleId  String   @unique
+  token       String   @unique // 难以枚举的访问令牌
+  createdAt   DateTime @default(now())
+
+  // 关联关系
+  schedule    Schedule  @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
+  @@map("share_links")
+}
+
+model OverlapStats {
+  id                    String   @id @default(cuid())
+  scheduleId            String
+  startTime             DateTime // 重叠时间段开始时间
+  endTime               DateTime // 重叠时间段结束时间
+  participantCount      Int      // 重叠参与者数量
+  participantNames      String   // 参与者姓名列表（JSON格式）
+  createdAt             DateTime @default(now())
+
+  // 关联关系
+  schedule              Schedule  @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+
+  @@index([scheduleId, startTime])
+  @@map("overlap_stats")
+}

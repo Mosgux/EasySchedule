@@ -1,0 +1,16 @@
+node_modules/
+dist/
+build/
+coverage/
+*.log
+.env*
+.DS_Store
+Thumbs.db
+*.min.js
+*.min.css
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+*.config.js
+*.config.ts
+.turbo/
