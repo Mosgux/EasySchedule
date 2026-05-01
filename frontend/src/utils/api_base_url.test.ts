@@ -6,18 +6,16 @@ describe('resolveApiBaseUrl', () => {
     expect(resolveApiBaseUrl(undefined, true)).toBe('/api');
   });
 
-  it('uses the EasySchedule API path by default in production', () => {
-    expect(resolveApiBaseUrl(undefined, false)).toBe('/EasySchedule/api');
+  it('uses the root API path by default in production', () => {
+    expect(resolveApiBaseUrl(undefined, false)).toBe('/api');
   });
 
   it('normalizes a mistaken EasySchedule api path back to the dev proxy', () => {
     expect(resolveApiBaseUrl('/eAsYsChEdUlE/api/', true)).toBe('/api');
   });
 
-  it('keeps the EasySchedule api path in production with canonical casing', () => {
-    expect(resolveApiBaseUrl('/eAsYsChEdUlE/api/', false)).toBe(
-      '/EasySchedule/api'
-    );
+  it('keeps the production api path rooted while normalizing legacy casing', () => {
+    expect(resolveApiBaseUrl('/eAsYsChEdUlE/api/', false)).toBe('/api');
   });
 
   it('preserves explicit absolute URLs while trimming trailing slashes', () => {

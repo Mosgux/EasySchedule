@@ -116,7 +116,7 @@ export const REGEX_PATTERNS = {
   PARTICIPANT_NAME: /^[\u4e00-\u9fa5a-zA-Z0-9_\s]{1,50}$/,
   SCHEDULE_TITLE: /^.{1,100}$/,
   DESCRIPTION: /^.{0,500}$/,
-  TIMEZONE: /^[A-Za-z_\/]+$/,
+  TIMEZONE: /^[A-Za-z_/]+$/,
   SHARE_TOKEN: /^[0-9A-Za-z]{8,32}$/,
 } as const;
 

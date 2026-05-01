@@ -1,7 +1,7 @@
 import { ShareLink as PrismaShareLink } from '@prisma/client';
 import nanoid = require('nanoid');
 
-const EASY_SCHEDULE_BASE_PATH = '/EasySchedule';
+const LEGACY_EASY_SCHEDULE_BASE_PATH_REGEX = /\/easyschedule$/i;
 
 export function buildShareLinkUrl(
   token: string,
@@ -10,8 +10,8 @@ export function buildShareLinkUrl(
   const normalizedBaseUrl = baseUrl
     .trim()
     .replace(/\/+$/, '')
-    .replace(/\/easyschedule$/i, '');
-  return `${normalizedBaseUrl}${EASY_SCHEDULE_BASE_PATH}/share/${token}`;
+    .replace(LEGACY_EASY_SCHEDULE_BASE_PATH_REGEX, '');
+  return `${normalizedBaseUrl}/share/${token}`;
 }
 
 export interface ShareLinkResponse {

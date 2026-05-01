@@ -1,7 +1,21 @@
-export const EASY_SCHEDULE_BASE_PATH = '/EasySchedule';
-export const EASY_SCHEDULE_PUBLIC_BASE_PATH = `${EASY_SCHEDULE_BASE_PATH}/`;
+export const LEGACY_EASY_SCHEDULE_BASE_PATH = '/EasySchedule';
 
-export function normalizeEasyScheduleRequestPath(
+export function buildAppPath(path: string = '/'): string {
+  const trimmedPath = path.trim();
+
+  if (!trimmedPath || trimmedPath === '/') {
+    return '/';
+  }
+
+  const normalizedPath = `/${trimmedPath.replace(/^\/+/, '')}`.replace(
+    /\/{2,}/g,
+    '/'
+  );
+
+  return normalizedPath.replace(/\/+$/, '') || '/';
+}
+
+export function normalizeLegacyEasyScheduleRequestPath(
   requestPath: string
 ): string | null {
   const [pathname, search = ''] = requestPath.split('?', 2);
@@ -13,10 +27,9 @@ export function normalizeEasyScheduleRequestPath(
 
   const rawRemainder = match[1] ?? '';
   const normalizedRemainder = rawRemainder.split('/').filter(Boolean).join('/');
-
   const normalizedPath = normalizedRemainder
-    ? `${EASY_SCHEDULE_BASE_PATH}/${normalizedRemainder}`
-    : EASY_SCHEDULE_PUBLIC_BASE_PATH;
+    ? buildAppPath(normalizedRemainder)
+    : '/';
 
   return search ? `${normalizedPath}?${search}` : normalizedPath;
 }

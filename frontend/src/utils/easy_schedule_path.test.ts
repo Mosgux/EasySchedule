@@ -1,41 +1,47 @@
 import { describe, expect, it } from 'vitest';
 import {
-  EASY_SCHEDULE_PUBLIC_BASE_PATH,
-  normalizeEasyScheduleRequestPath,
+  buildAppPath,
+  normalizeLegacyEasyScheduleRequestPath,
 } from './easy_schedule_path';
 
-describe('normalizeEasyScheduleRequestPath', () => {
-  it('keeps the canonical public base path', () => {
-    expect(normalizeEasyScheduleRequestPath('/EasySchedule/')).toBe(
-      EASY_SCHEDULE_PUBLIC_BASE_PATH
-    );
+describe('buildAppPath', () => {
+  it('keeps the application root path canonical', () => {
+    expect(buildAppPath('/')).toBe('/');
   });
 
-  it('adds the trailing slash when the base path is missing one', () => {
-    expect(normalizeEasyScheduleRequestPath('/EasySchedule')).toBe(
-      EASY_SCHEDULE_PUBLIC_BASE_PATH
-    );
+  it('normalizes nested application paths', () => {
+    expect(buildAppPath('schedule/token/')).toBe('/schedule/token');
+  });
+});
+
+describe('normalizeLegacyEasyScheduleRequestPath', () => {
+  it('normalizes the legacy base path to the application root', () => {
+    expect(normalizeLegacyEasyScheduleRequestPath('/EasySchedule/')).toBe('/');
+  });
+
+  it('normalizes the legacy base path without a trailing slash', () => {
+    expect(normalizeLegacyEasyScheduleRequestPath('/EasySchedule')).toBe('/');
   });
 
   it('normalizes mixed-case base paths', () => {
-    expect(normalizeEasyScheduleRequestPath('/eAsYsChEdUlE/share/token')).toBe(
-      '/EasySchedule/share/token'
-    );
+    expect(
+      normalizeLegacyEasyScheduleRequestPath('/eAsYsChEdUlE/share/token')
+    ).toBe('/share/token');
   });
 
   it('collapses repeated slashes after the base path', () => {
     expect(
-      normalizeEasyScheduleRequestPath('/EASYSCHEDULE//share///token')
-    ).toBe('/EasySchedule/share/token');
+      normalizeLegacyEasyScheduleRequestPath('/EASYSCHEDULE//share///token')
+    ).toBe('/share/token');
   });
 
   it('preserves the query string while normalizing the path', () => {
-    expect(normalizeEasyScheduleRequestPath('/easyschedule?foo=bar')).toBe(
-      '/EasySchedule/?foo=bar'
-    );
+    expect(
+      normalizeLegacyEasyScheduleRequestPath('/easyschedule?foo=bar')
+    ).toBe('/?foo=bar');
   });
 
   it('ignores unrelated paths', () => {
-    expect(normalizeEasyScheduleRequestPath('/other/path')).toBeNull();
+    expect(normalizeLegacyEasyScheduleRequestPath('/other/path')).toBeNull();
   });
 });

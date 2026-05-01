@@ -2,6 +2,13 @@
  * 剪贴板操作工具函数
  */
 
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezonePlugin from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezonePlugin);
+
 /**
  * 复制文本到剪贴板
  * @param text 要复制的文本
@@ -54,13 +61,6 @@ export async function copyOptimalTimeSlots(
   if (!optimalSlots || optimalSlots.length === 0) {
     return false;
   }
-
-  const dayjs = (await import('dayjs')).default;
-  const utc = await import('dayjs/plugin/utc');
-  const timezonePlugin = await import('dayjs/plugin/timezone');
-
-  dayjs.extend(utc.default);
-  dayjs.extend(timezonePlugin.default);
 
   // 格式化时间段文本
   const formattedSlots = optimalSlots.map((slot, index) => {

@@ -1,8 +1,8 @@
-# EasySchedule 部署指南 (www.neemo.tech)
+# EasySchedule 部署指南 (schedule.neemo.tech)
 
 ## 概述
 
-本指南说明如何将 EasySchedule 部署到 www.neemo.tech 域名，通过 `/EasySchedule` 路径访问应用。
+本指南说明如何将 EasySchedule 部署到 schedule.neemo.tech 域名，并通过根路径直接访问应用。
 
 ## 配置文件
 
@@ -12,18 +12,18 @@
 
 主要特性：
 
-- **域名**: www.neemo.tech
+- **域名**: schedule.neemo.tech
 - **前端代理**: http://127.0.0.1:5173 (Vite 开发服务器)
 - **后端代理**: http://127.0.0.1:4000 (Node.js API)
-- **路径**: /EasySchedule/
+- **路径**: /
 
 ### 2. 环境变量配置
 
 **前端** (`frontend/.env`)：
 
 ```env
-VITE_API_BASE_URL=/EasySchedule/api
-VITE_SHARE_BASE_URL=/EasySchedule
+VITE_API_BASE_URL=/api
+VITE_SHARE_BASE_URL=https://schedule.neemo.tech
 ```
 
 **后端** (`backend/.env`)：
@@ -32,15 +32,16 @@ VITE_SHARE_BASE_URL=/EasySchedule
 DATABASE_URL="file:./data/easy.db"
 PORT=4000
 NODE_ENV=production
-CORS_ORIGIN=http://www.neemo.tech
+CORS_ORIGIN=https://schedule.neemo.tech
+SHARE_BASE_URL=https://schedule.neemo.tech
 ```
 
 ### 3. Vite 配置
 
-前端已配置为支持子路径：
+前端已配置为根路径部署：
 
 ```typescript
-base: '/EasySchedule/',
+base: '/',
 ```
 
 ## 部署步骤
@@ -75,24 +76,24 @@ start_easyschedule.bat server
 
 访问以下地址验证：
 
-- **主应用**: http://www.neemo.tech/EasySchedule/
-- **API测试**: http://www.neemo.tech/EasySchedule/api/health
-- **分享链接**: http://www.neemo.tech/EasySchedule/share/{token}
+- **主应用**: https://schedule.neemo.tech/
+- **API测试**: https://schedule.neemo.tech/health
+- **分享链接**: https://schedule.neemo.tech/share/{token}
 
 ## 访问地址
 
 ### 主要功能
 
-- **首页**: http://www.neemo.tech/EasySchedule/
-- **创建时间表**: http://www.neemo.tech/EasySchedule/
-- **参与者页面**: http://www.neemo.tech/EasySchedule/share/{token}
-- **可视化结果**: http://www.neemo.tech/EasySchedule/schedule/{id}
+- **首页**: https://schedule.neemo.tech/
+- **创建时间表**: https://schedule.neemo.tech/
+- **参与者页面**: https://schedule.neemo.tech/share/{token}
+- **可视化结果**: https://schedule.neemo.tech/schedule/{id}
 
 ### API 端点
 
-- **健康检查**: GET http://www.neemo.tech/EasySchedule/health
-- **创建时间表**: POST http://www.neemo.tech/EasySchedule/api/schedules
-- **获取分享信息**: GET http://www.neemo.tech/EasySchedule/api/share/{token}
+- **健康检查**: GET https://schedule.neemo.tech/health
+- **创建时间表**: POST https://schedule.neemo.tech/api/schedules
+- **获取分享信息**: GET https://schedule.neemo.tech/api/share/{token}
 
 ## 运行说明
 

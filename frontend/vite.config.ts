@@ -1,29 +1,9 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { normalizeLegacyEasyScheduleRequestPath } from './src/utils/easy_schedule_path';
 
-const EASY_SCHEDULE_BASE_PATH = '/EasySchedule';
-const EASY_SCHEDULE_PUBLIC_BASE_PATH = `${EASY_SCHEDULE_BASE_PATH}/`;
-
-function normalizeEasyScheduleRequestPath(requestPath: string): string | null {
-  const [pathname, search = ''] = requestPath.split('?', 2);
-  const match = pathname.match(/^\/easyschedule(?:\/+(.*))?\/?$/i);
-
-  if (!match) {
-    return null;
-  }
-
-  const rawRemainder = match[1] ?? '';
-  const normalizedRemainder = rawRemainder.split('/').filter(Boolean).join('/');
-
-  const normalizedPath = normalizedRemainder
-    ? `${EASY_SCHEDULE_BASE_PATH}/${normalizedRemainder}`
-    : EASY_SCHEDULE_PUBLIC_BASE_PATH;
-
-  return search ? `${normalizedPath}?${search}` : normalizedPath;
-}
-
-function easySchedulePathRedirectPlugin(): Plugin {
+function legacyEasySchedulePathRedirectPlugin(): Plugin {
   const handleRedirect = (
     url: string | undefined,
     res: {
@@ -38,7 +18,7 @@ function easySchedulePathRedirectPlugin(): Plugin {
       return;
     }
 
-    const normalizedUrl = normalizeEasyScheduleRequestPath(url);
+    const normalizedUrl = normalizeLegacyEasyScheduleRequestPath(url);
     if (!normalizedUrl || normalizedUrl === url) {
       next();
       return;
@@ -50,7 +30,7 @@ function easySchedulePathRedirectPlugin(): Plugin {
   };
 
   return {
-    name: 'easy-schedule-path-redirect',
+    name: 'legacy-easy-schedule-path-redirect',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
         handleRedirect(req.url, res, next);
@@ -65,8 +45,8 @@ function easySchedulePathRedirectPlugin(): Plugin {
 }
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react(), easySchedulePathRedirectPlugin()],
+export default defineConfig(({ mode }) => ({
+  plugins: [react(), legacyEasySchedulePathRedirectPlugin()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -78,11 +58,25 @@ export default defineConfig({
       '@/styles': path.resolve(__dirname, './src/styles'),
     },
   },
-  base: EASY_SCHEDULE_PUBLIC_BASE_PATH,
+  base: '/',
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      '@tanstack/react-query',
+    ],
+  },
   server: {
     port: 5173,
     host: true,
-    allowedHosts: ['www.neemo.tech', 'neemo.tech', 'localhost', '127.0.0.1'],
+    allowedHosts: [
+      'www.neemo.tech',
+      'neemo.tech',
+      'schedule.neemo.tech',
+      'localhost',
+      '127.0.0.1',
+    ],
     proxy: {
       '/api': {
         target: 'http://localhost:4000',
@@ -93,7 +87,8 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    target: 'es2020',
+    sourcemap: mode !== 'production',
     rollupOptions: {
       output: {
         manualChunks: {
@@ -104,4 +99,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));

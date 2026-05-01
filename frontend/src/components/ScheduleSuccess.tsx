@@ -4,7 +4,7 @@ import {
   ClipboardDocumentIcon,
   ShareIcon,
 } from '@heroicons/react/24/outline';
-import { EASY_SCHEDULE_BASE_PATH } from '../utils/easy_schedule_path';
+import { buildAppPath } from '../utils/easy_schedule_path';
 
 interface ScheduleSuccessProps {
   schedule: {
@@ -73,7 +73,7 @@ export function ScheduleSuccess({
 
   const getManagementUrl = () => {
     const baseUrl = window.location.origin;
-    return `${baseUrl}${EASY_SCHEDULE_BASE_PATH}/schedule/${schedule.id}`;
+    return `${baseUrl}${buildAppPath(`/schedule/${schedule.id}`)}`;
   };
 
   return (

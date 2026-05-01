@@ -6,7 +6,7 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
 import { scheduleApi } from '../services/scheduleApi';
-import { EASY_SCHEDULE_BASE_PATH } from '../utils/easy_schedule_path';
+import { buildAppPath } from '../utils/easy_schedule_path';
 
 // 可视化组件
 import VisualizationCalendar from '../components/VisualizationCalendar';
@@ -60,7 +60,7 @@ export function OwnerView() {
 
   // 生成分享链接
   const shareUrl = scheduleData?.shareToken
-    ? `${window.location.origin}${EASY_SCHEDULE_BASE_PATH}/share/${scheduleData.shareToken}`
+    ? `${window.location.origin}${buildAppPath(`/share/${scheduleData.shareToken}`)}`
     : '';
 
   // 复制分享链接到剪贴板

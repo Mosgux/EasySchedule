@@ -1,7 +1,7 @@
-import { EASY_SCHEDULE_BASE_PATH } from './easy_schedule_path';
+import { buildAppPath } from './easy_schedule_path';
 
 const DEV_API_BASE_PATH = '/api';
-const PROD_API_BASE_PATH = `${EASY_SCHEDULE_BASE_PATH}/api`;
+const PROD_API_BASE_PATH = buildAppPath('/api');
 
 const isPathOnlyValue = (value: string): boolean => value.startsWith('/');
 

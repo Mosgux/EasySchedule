@@ -92,8 +92,8 @@ cp .env.example .env
 
 ```env
 # API配置
-VITE_API_BASE_URL=http://localhost:4000/api
-VITE_SHARE_BASE_URL=http://localhost:5173/EasySchedule
+VITE_API_BASE_URL=/api
+VITE_SHARE_BASE_URL=http://localhost:5173
 
 # 应用配置
 VITE_APP_TITLE=EasySchedule - 多人时间协商
@@ -162,7 +162,7 @@ npm run dev
 
 #### 检查前端应用
 
-访问：http://localhost:5173/EasySchedule
+访问：http://localhost:5173
 
 ### 3. 功能测试
 
@@ -281,7 +281,7 @@ cp .env.example .env.production
 ```env
 # API配置
 VITE_API_BASE_URL=http://your-domain.com/api
-VITE_SHARE_BASE_URL=http://your-domain.com/EasySchedule
+VITE_SHARE_BASE_URL=https://schedule.neemo.tech
 
 # 应用配置
 VITE_APP_TITLE=EasySchedule - 多人时间协商
@@ -299,23 +299,27 @@ VITE_ENABLE_DEBUG=false
 ```nginx
 server {
     listen 80;
-    server_name your-domain.com;  # 替换为您的域名
+    server_name schedule.neemo.tech;
+
+    root /var/www/easyschedule/frontend/dist;
+    index index.html;
+
+    location = /EasySchedule {
+        return 301 /;
+    }
+
+    location ^~ /EasySchedule/ {
+        rewrite ^/EasySchedule/?(.*)$ /$1 permanent;
+    }
 
     # 前端静态文件
-    location /EasySchedule {
-        alias /var/www/easyschedule/frontend/dist;
-        try_files $uri $uri/ /EasySchedule/index.html;
-
-        # 缓存静态资源
-        location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
-            expires 1y;
-            add_header Cache-Control "public, immutable";
-        }
+    location / {
+        try_files $uri $uri/ /index.html;
     }
 
     # API反向代理
-    location /EasySchedule/api {
-        proxy_pass http://127.0.0.1:4000/api;
+    location /api/ {
+        proxy_pass http://127.0.0.1:4000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -329,6 +333,16 @@ server {
         proxy_connect_timeout 60s;
         proxy_send_timeout 60s;
         proxy_read_timeout 60s;
+    }
+
+    location = /health {
+        proxy_pass http://127.0.0.1:4000/health;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        access_log off;
     }
 
     # 安全头部
